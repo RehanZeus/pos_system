@@ -13,7 +13,7 @@
     /* 2. CARD POS */
     .card-pos {
         height: 100%;
-        border-radius: 8px; /* Radius dikurangi sedikit biar ga boros tempat */
+        border-radius: 8px;
         border: 1px solid #e0e0e0;
         display: flex;
         flex-direction: column;
@@ -23,7 +23,7 @@
 
     /* 3. AREA SCROLL (PRODUK & KERANJANG) */
     .scroll-area {
-        flex-grow: 1; /* Mengisi sisa ruang kosong */
+        flex-grow: 1;
         overflow-y: auto;
         padding: 10px;
         background-color: #f9f9f9;
@@ -94,7 +94,7 @@
                         </tr>
                     </thead>
                     <tbody id="cartTableBody">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
 
@@ -128,6 +128,11 @@
     </div>
 </div>
 
+<?= $this->endSection() ?>
+
+
+<?= $this->section('modals') ?>
+
 <div class="modal fade" id="modalStruk" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0 shadow-lg">
@@ -145,6 +150,11 @@
         </div>
     </div>
 </div>
+
+<?= $this->endSection() ?>
+
+
+<?= $this->section('scripts') ?>
 
 <script>
     let cart = [];

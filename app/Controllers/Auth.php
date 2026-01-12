@@ -9,9 +9,8 @@ class Auth extends BaseController
 {
     public function index()
     {
-        // Jika sudah login, lempar ke dashboard (nanti kita buat dashboardnya)
         if (session()->get('isLoggedIn')) {
-            return redirect()->to('/dashboard');
+            return $this->redirectBasedOnRole(session()->get('role'));
         }
         return view('auth/login');
     }
@@ -21,18 +20,13 @@ class Auth extends BaseController
         $session = session();
         $model = new UserModel();
         
-        // Ambil input dari form
         $username = $this->request->getVar('username');
         $password = $this->request->getVar('password');
         
-        // Cari user berdasarkan username
         $data = $model->where('username', $username)->first();
 
         if ($data) {
-            $pass = $data['password'];
-            // Verifikasi Password Hash
-            if (password_verify($password, $pass)) {
-                // Password Benar! Simpan sesi
+            if (password_verify($password, $data['password'])) {
                 $ses_data = [
                     'id'        => $data['id'],
                     'username'  => $data['username'],
@@ -42,16 +36,13 @@ class Auth extends BaseController
                 ];
                 $session->set($ses_data);
                 
-                // Redirect sesuai role (Nanti kita sempurnakan di Tahap Dashboard)
-                return redirect()->to('/dashboard');
+                return $this->redirectBasedOnRole($data['role']);
                 
             } else {
-                // Password Salah
                 $session->setFlashdata('error', 'Password Salah.');
                 return redirect()->to('/');
             }
         } else {
-            // Username tidak ditemukan
             $session->setFlashdata('error', 'Username tidak ditemukan.');
             return redirect()->to('/');
         }
@@ -61,5 +52,18 @@ class Auth extends BaseController
     {
         session()->destroy();
         return redirect()->to('/');
+    }
+
+    // --- LOGIKA REDIRECT BARU ---
+    private function redirectBasedOnRole($role)
+    {
+        if ($role == 'owner') {
+            return redirect()->to('/dashboard'); // Owner -> Dashboard
+        } elseif ($role == 'admin') {
+            return redirect()->to('/products');  // Admin -> Produk (Gudang)
+        } elseif ($role == 'kasir') {
+            return redirect()->to('/pos');       // Kasir -> POS
+        }
+        return redirect()->to('/'); 
     }
 }

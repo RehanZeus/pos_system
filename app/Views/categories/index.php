@@ -2,6 +2,12 @@
 
 <?= $this->section('content') ?>
 
+<style>
+    /* Force Backdrop (Black Layer) to be below the Modal */
+    .modal-backdrop { z-index: 1050 !important; }
+    .modal { z-index: 1060 !important; }
+</style>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="d-flex align-items-center">
         <div class="bg-primary text-white rounded p-2 me-3 shadow-sm">
@@ -88,7 +94,12 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalCat" tabindex="-1" aria-hidden="true">
+<?= $this->endSection() ?>
+
+
+<?= $this->section('modals') ?>
+
+<div class="modal fade" id="modalCat" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
             <div class="modal-header border-bottom-0 pb-0">
@@ -117,8 +128,12 @@
     </div>
 </div>
 
+<?= $this->endSection() ?>
+
+
+<?= $this->section('scripts') ?>
 <script>
-    // FUNGSI BUKA MODAL (Auto Title & Action)
+    // FUNCTION TO OPEN MODAL (Auto Title & Action)
     function openModal(type, id = null, name = '') {
         const modalElement = document.getElementById('modalCat');
         const modal = new bootstrap.Modal(modalElement);
@@ -131,17 +146,17 @@
             title.innerText = "Tambah Kategori Baru";
             inputId.value = "";
             inputName.value = "";
-            // Route untuk Simpan Baru
+            // Route for Add
             form.action = "<?= base_url('categories/store') ?>"; 
         } else {
             title.innerText = "Edit Kategori";
             inputId.value = id;
             inputName.value = name;
-            // Route untuk Update
-            form.action = "<?= base_url('categories/update') ?>"; 
+            // Route for Update (Ensure you have this route defined or reuse store if logic handles ID)
+            form.action = "<?= base_url('categories/store') ?>"; // Assuming store handles both insert/update based on ID presence
         }
         
-        // Fokus ke input saat modal muncul
+        // Focus input when modal opens
         modalElement.addEventListener('shown.bs.modal', function () {
             inputName.focus();
         });
@@ -149,7 +164,7 @@
         modal.show();
     }
 
-    // FUNGSI SEARCH TABLE REALTIME
+    // REALTIME TABLE SEARCH FUNCTION
     function filterTable() {
         let input = document.getElementById("searchInput");
         let filter = input.value.toUpperCase();
@@ -157,7 +172,7 @@
         let tr = table.getElementsByTagName("tr");
 
         for (let i = 1; i < tr.length; i++) { // Skip header
-            let td = tr[i].getElementsByTagName("td")[1]; // Kolom Nama (Index 1)
+            let td = tr[i].getElementsByTagName("td")[1]; // Name Column (Index 1)
             if (td) {
                 let txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -169,5 +184,4 @@
         }
     }
 </script>
-
 <?= $this->endSection() ?>

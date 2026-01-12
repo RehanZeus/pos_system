@@ -18,9 +18,7 @@
             <i class="bi bi-file-earmark-excel me-2"></i> Export Excel
         </button>
         <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-2" aria-labelledby="exportMenu" style="min-width: 260px; border-radius: 12px;">
-            <li>
-                <h6 class="dropdown-header text-uppercase small text-muted fw-bold ls-1">Pilih Jenis Laporan</h6>
-            </li>
+            <li><h6 class="dropdown-header text-uppercase small text-muted fw-bold ls-1">Pilih Jenis Laporan</h6></li>
             
             <li>
                 <a class="dropdown-item py-2 d-flex align-items-center" href="<?= base_url('reports/export') ?>?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>" target="_blank">
@@ -169,7 +167,12 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalDetail" tabindex="-1">
+<?= $this->endSection() ?>
+
+
+<?= $this->section('modals') ?>
+
+<div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
             <div class="modal-header border-bottom-0 pb-0">
@@ -201,18 +204,36 @@
     </div>
 </div>
 
+<?= $this->endSection() ?>
+
+
+<?= $this->section('scripts') ?>
 <script>
+    // Inisialisasi Tooltip Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
     function reprintStruk(invoice) {
         let url = '<?= base_url('pos/struk') ?>/' + invoice;
         window.open(url, '_blank', 'width=400,height=600');
     }
+
+    // Variabel Instance Modal agar tidak duplicate
+    let detailModalInstance;
 
     async function showDetail(saleId, invoiceNo) {
         document.getElementById('detailTitle').innerText = invoiceNo;
         const tbody = document.getElementById('detailList');
         tbody.innerHTML = '<tr><td colspan="3" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-primary mb-2"></div><br>Memuat data...</td></tr>';
         
-        new bootstrap.Modal(document.getElementById('modalDetail')).show();
+        // Cek apakah instance modal sudah ada, jika belum buat baru
+        const modalElement = document.getElementById('modalDetail');
+        if (!detailModalInstance) {
+            detailModalInstance = new bootstrap.Modal(modalElement);
+        }
+        detailModalInstance.show();
 
         try {
             let response = await fetch('<?= base_url('reports/detail') ?>/' + saleId);
@@ -241,5 +262,4 @@
         }
     }
 </script>
-
 <?= $this->endSection() ?>

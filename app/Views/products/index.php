@@ -65,23 +65,16 @@
                     <?php else: ?>
                         <?php foreach($products as $row): ?>
                         <?php 
-                            // LOGIKA PROFIT
-                            $modal = $row['purchase_price'];
-                            $jual  = $row['price'];
+                            $modal  = $row['purchase_price']; 
+                            $jual   = $row['price'];          
                             $profit = $jual - $modal;
-                            
-                            // LOGIKA GAMBAR
-                            $img = $row['image'] ? 'uploads/products/'.$row['image'] : 'https://via.placeholder.com/50?text=IMG';
                         ?>
                         <tr>
                             <td class="ps-4">
-                                <div class="d-flex align-items-center">
-                                    <img src="<?= base_url($img) ?>" class="rounded border me-3" width="45" height="45" style="object-fit: cover;">
-                                    <div>
-                                        <div class="fw-bold text-dark"><?= esc($row['name']) ?></div>
-                                        <div class="badge bg-light text-secondary border" style="font-family: monospace; font-size: 10px;">
-                                            <i class="bi bi-upc me-1"></i><?= esc($row['barcode']) ?>
-                                        </div>
+                                <div>
+                                    <div class="fw-bold text-dark"><?= esc($row['name']) ?></div>
+                                    <div class="badge bg-light text-secondary border" style="font-family: monospace; font-size: 10px;">
+                                        <i class="bi bi-upc me-1"></i><?= esc($row['barcode']) ?>
                                     </div>
                                 </div>
                             </td>
@@ -114,7 +107,7 @@
                                     </button>
                                     <a href="<?= base_url('products/delete/'.$row['id']) ?>" 
                                        class="btn btn-sm btn-light border text-danger" 
-                                       onclick="return confirm('Hapus produk ini beserta gambar?')" 
+                                       onclick="return confirm('Hapus produk ini?')" 
                                        data-bs-toggle="tooltip" title="Hapus">
                                         <i class="bi bi-trash"></i>
                                     </a>
@@ -129,31 +122,34 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalProduct" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+<?= $this->endSection() ?>
+
+
+<?= $this->section('modals') ?>
+
+<div class="modal fade" id="modalProduct" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered"> 
         <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
             <div class="modal-header border-bottom-0 pb-0">
                 <h5 class="modal-title fw-bold" id="modalTitle">Tambah Produk</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             
-            <form action="<?= base_url('products/store') ?>" method="post" enctype="multipart/form-data" id="prodForm">
-                <div class="modal-body">
+            <form action="<?= base_url('products/store') ?>" method="post" id="prodForm">
+                <div class="modal-body p-4">
                     <input type="hidden" name="id" id="prodId">
-                    <input type="hidden" name="old_image" id="oldImage">
 
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label small text-uppercase fw-bold text-muted">Barcode</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-upc"></i></span>
-                                <input type="text" name="barcode" id="barcode" class="form-control bg-light border-start-0" placeholder="Scan / Input" required>
-                                <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()" title="Buat Barcode Acak"><i class="bi bi-magic"></i> Auto</button>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">Barcode</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="barcode" id="barcode" class="form-control" placeholder="Scan..." required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()"><i class="bi bi-magic"></i></button>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-uppercase fw-bold text-muted">Kategori</label>
-                            <select name="category_id" id="catId" class="form-select bg-light" required>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">Kategori</label>
+                            <select name="category_id" id="catId" class="form-select form-select-sm" required>
                                 <option value="">-- Pilih --</option>
                                 <?php foreach($categories as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
@@ -163,40 +159,27 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small text-uppercase fw-bold text-muted">Nama Produk</label>
-                        <input type="text" name="name" id="name" class="form-control bg-light" placeholder="Contoh: Kopi Susu Gula Aren" required>
+                        <label class="form-label small fw-bold text-muted">Nama Produk</label>
+                        <input type="text" name="name" id="name" class="form-control" required>
                     </div>
 
-                    <div class="p-3 bg-light border rounded mb-3" style="border-radius: 8px;">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label small text-uppercase fw-bold text-danger">Harga Beli (Modal)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0">Rp</span>
-                                    <input type="number" name="purchase_price" id="purchase_price" class="form-control bg-white border-start-0" placeholder="0">
-                                </div>
-                                <small class="text-muted" style="font-size:10px">Harga dari supplier</small>
+                    <div class="p-3 bg-light border rounded mb-0">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-danger">Modal</label>
+                                <input type="number" name="purchase_price" id="purchase_price" class="form-control" placeholder="0" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label small text-uppercase fw-bold text-primary">Harga Jual</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0">Rp</span>
-                                    <input type="number" name="price" id="price" class="form-control bg-white border-start-0 fw-bold" placeholder="0" required>
-                                </div>
-                                <small class="text-muted" style="font-size:10px">Harga ke pelanggan</small>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold text-primary">Jual</label>
+                                <input type="number" name="price" id="price" class="form-control fw-bold" placeholder="0" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label small text-uppercase fw-bold text-muted">Stok Awal</label>
-                                <input type="number" name="stock" id="stock" class="form-control bg-white" value="0">
+                            <div class="col-12 mt-2">
+                                <label class="form-label small fw-bold text-muted">Stok Awal</label>
+                                <input type="number" name="stock" id="stock" class="form-control" value="0" min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label small text-uppercase fw-bold text-muted">Gambar Produk (Opsional)</label>
-                        <input type="file" name="image" class="form-control">
-                        <small class="text-muted">Format: JPG, PNG, JPEG.</small>
-                    </div>
                 </div>
                 <div class="modal-footer border-top-0 pt-0">
                     <button type="button" class="btn btn-light w-100 py-2 text-muted fw-bold" data-bs-dismiss="modal">Batal</button>
@@ -207,22 +190,23 @@
     </div>
 </div>
 
+<?= $this->endSection() ?>
+
+
+<?= $this->section('scripts') ?>
 <script>
-    // 1. GENERATE BARCODE OTOMATIS
     function generateBarcode() {
         let random = Math.floor(Math.random() * 89999999) + 10000000;
         document.getElementById('barcode').value = random;
     }
 
-    // 2. BUKA MODAL (UNIFIED FUNCTION)
     function openModal(type, data = null) {
-        const modal = new bootstrap.Modal(document.getElementById('modalProduct'));
+        const modalEl = document.getElementById('modalProduct');
         const title = document.getElementById('modalTitle');
         const form = document.getElementById('prodForm');
 
-        // Reset Form
+        // Reset Nilai
         document.getElementById('prodId').value = "";
-        document.getElementById('oldImage').value = "";
         document.getElementById('barcode').value = "";
         document.getElementById('name').value = "";
         document.getElementById('catId').value = "";
@@ -235,34 +219,29 @@
             form.action = "<?= base_url('products/store') ?>";
         } else if (type === 'edit' && data) {
             title.innerText = "Edit Produk";
-            form.action = "<?= base_url('products/update') ?>"; // Pastikan route update pakai POST data ID atau sesuaikan
+            form.action = "<?= base_url('products/update') ?>"; 
 
             // Isi Data
             document.getElementById('prodId').value = data.id;
-            document.getElementById('oldImage').value = data.image;
             document.getElementById('barcode').value = data.barcode;
             document.getElementById('name').value = data.name;
             document.getElementById('catId').value = data.category_id;
-            document.getElementById('purchase_price').value = data.purchase_price;
-            document.getElementById('price').value = data.price;
+            document.getElementById('purchase_price').value = data.purchase_price; 
+            document.getElementById('price').value = data.price; 
             document.getElementById('stock').value = data.stock;
         }
 
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
     }
 
-    // 3. SEARCH REALTIME
     function filterTable() {
         let input = document.getElementById("searchInput");
         let filter = input.value.toUpperCase();
         let table = document.getElementById("productTable");
         let tr = table.getElementsByTagName("tr");
-
         for (let i = 1; i < tr.length; i++) {
-            // Kolom Nama Produk ada di index 0 (karena ada div wrapper)
-            // Tapi kita cek text content dari seluruh baris agar bisa cari barcode/kategori juga
             let rowContent = tr[i].textContent || tr[i].innerText;
-            
             if (rowContent.toUpperCase().indexOf(filter) > -1) {
                 tr[i].style.display = "";
             } else {
@@ -271,5 +250,4 @@
         }
     }
 </script>
-
 <?= $this->endSection() ?>
