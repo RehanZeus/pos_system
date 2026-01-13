@@ -14,7 +14,7 @@
             overflow-x: hidden; 
         }
         
-        /* --- 1. SIDEBAR (Fixed Left) --- */
+        /* ================= SIDEBAR ================= */
         .sidebar-wrapper {
             position: fixed;
             top: 0;
@@ -22,12 +22,35 @@
             height: 100vh;
             width: 250px;
             background-color: #212529; 
-            z-index: 1040; /* Standar Bootstrap Sidebar */
+            z-index: 1040;
             overflow-y: auto; 
             transition: all 0.3s;
         }
 
-        /* --- 2. MAIN CONTENT (Push Right) --- */
+        .sidebar-wrapper .nav-link {
+            color: #adb5bd;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-wrapper .nav-link:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .sidebar-wrapper .nav-link.active {
+            background-color: #0d6efd;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(13,110,253,.35);
+        }
+
+        .sidebar-wrapper .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        /* ================= MAIN CONTENT ================= */
         .main-wrapper {
             margin-left: 250px; 
             width: calc(100% - 250px);
@@ -38,46 +61,51 @@
             z-index: 1; 
         }
 
-        /* Hilangkan Hack Overlay sebelumnya, biarkan Bootstrap mengatur layer secara alami */
-        
-        /* Fix Debug Toolbar agar tidak mengganggu layout (Opsional) */
-        #debug-icon, .debug-bar-container {
+        /* LOGIN PAGE (NO SIDEBAR) */
+        .main-wrapper.no-sidebar {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        /* ===== FIX DROPDOWN OVERLAY BUG (FINAL) ===== */
+        .dropdown-backdrop {
             display: none !important;
         }
 
-        .card-custom { 
-            border: none; 
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); 
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar-wrapper { margin-left: -250px; }
-            .main-wrapper { margin-left: 0; width: 100%; }
+        /* Debug toolbar off */
+        #debug-icon, .debug-bar-container {
+            display: none !important;
         }
     </style>
 </head>
 <body>
 
+<?php $isLoggedIn = session()->get('isLoggedIn'); ?>
+
+<?php if ($isLoggedIn): ?>
     <div class="sidebar-wrapper">
         <?= $this->include('partials/sidebar') ?>
     </div>
+<?php endif; ?>
 
-    <div class="main-wrapper">
-        <div class="container-fluid p-4">
-            
-            <?php if(session()->getFlashdata('error')): ?>
-                <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-            <?php endif; ?>
-            
-            <?= $this->renderSection('content') ?>
-        </div>
+<div class="main-wrapper <?= $isLoggedIn ? '' : 'no-sidebar' ?>">
+    <div class="container-fluid p-4">
+        
+        <?php if(session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger">
+                <?= session()->getFlashdata('error') ?>
+            </div>
+        <?php endif; ?>
+        
+        <?= $this->renderSection('content') ?>
     </div>
+</div>
 
-    <?= $this->renderSection('modals') ?>
+<?= $this->renderSection('modals') ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <?= $this->renderSection('scripts') ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<?= $this->renderSection('scripts') ?>
 
 </body>
 </html>
