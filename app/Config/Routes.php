@@ -17,7 +17,7 @@ $routes->get('logout', 'Auth::logout');
 // ========================
 // 2. DASHBOARD & USER MANAGEMENT (OWNER ONLY)
 // ========================
-// Admin & Kasir DILARANG
+// Gudang & Kasir DILARANG
 $routes->group('', ['filter' => 'role:owner'], function($routes) {
 
     // Dashboard
@@ -50,10 +50,11 @@ $routes->group('', ['filter' => 'role:owner'], function($routes) {
 
 
 // ========================
-// 3. MASTER DATA (OWNER & ADMIN)
+// 3. MASTER DATA (OWNER & GUDANG)
 // ========================
 // Kasir DILARANG
-$routes->group('', ['filter' => 'role:owner,admin'], function($routes) {
+// PERUBAHAN DISINI: filter 'admin' diganti jadi 'gudang'
+$routes->group('', ['filter' => 'role:owner,gudang'], function($routes) {
     
     // Categories
     $routes->group('categories', function($routes) {
@@ -73,9 +74,9 @@ $routes->group('', ['filter' => 'role:owner,admin'], function($routes) {
 
 
 // ========================
-// 4. TRANSAKSI & LAPORAN
+// 4. TRANSAKSI & LAPORAN (OWNER & KASIR)
 // ========================
-// Admin Gudang DILARANG
+// Gudang DILARANG
 $routes->group('', ['filter' => 'role:owner,kasir'], function($routes) {
     
     // POS

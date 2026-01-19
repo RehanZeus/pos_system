@@ -9,45 +9,40 @@ class UserSeeder extends Seeder
     public function run()
     {
         $data = [
-            // 1. AKUN OWNER (Akses Semua)
+            // User Gudang (Pengganti Admin)
             [
-                'username'   => 'owner',
-                'password'   => password_hash('owner123', PASSWORD_DEFAULT),
-                'name'       => 'Pemilik Toko',
-                'role'       => 'owner',
-                'created_at' => date('Y-m-d H:i:s'),
+                'username' => 'gudang',
+                'password' => password_hash('gudang123', PASSWORD_DEFAULT),
+                'name'     => 'Staf Gudang',
+                'role'     => 'gudang',
             ],
-            // 2. AKUN ADMIN (Akses Gudang)
+            // User Kasir
             [
-                'username'   => 'admin',
-                'password'   => password_hash('admin123', PASSWORD_DEFAULT),
-                'name'       => 'Super Admin',
-                'role'       => 'admin',
-                'created_at' => date('Y-m-d H:i:s'),
+                'username' => 'kasir',
+                'password' => password_hash('kasir123', PASSWORD_DEFAULT),
+                'name'     => 'Kasir Utama',
+                'role'     => 'kasir',
             ],
-            // 3. AKUN KASIR (Akses POS)
+            // User Owner
             [
-                'username'   => 'kasir',
-                'password'   => password_hash('kasir123', PASSWORD_DEFAULT),
-                'name'       => 'Kasir Utama',
-                'role'       => 'kasir',
-                'created_at' => date('Y-m-d H:i:s'),
+                'username' => 'owner',
+                'password' => password_hash('owner123', PASSWORD_DEFAULT),
+                'name'     => 'Pemilik Toko',
+                'role'     => 'owner',
             ]
         ];
 
-        // LOGIKA PINTAR (Safe Insert):
         foreach ($data as $user) {
-            // Cek apakah username ini sudah ada di database?
+            // Cek user, jika ada update, jika belum insert
             $exist = $this->db->table('users')->where('username', $user['username'])->get()->getRow();
-
-            if ($exist) {
-                // JIKA SUDAH ADA: Kita Update saja (biar password/role-nya ter-reset ke yang benar)
-                // Kita hapus 'created_at' dari array update agar tanggal lama tidak berubah
-                unset($user['created_at']); 
-                $this->db->table('users')->where('username', $user['username'])->update($user);
-            } else {
-                // JIKA BELUM ADA: Baru kita Insert
+            if (!$exist) {
+                $user['created_at'] = date('Y-m-d H:i:s');
                 $this->db->table('users')->insert($user);
+            } else {
+                $this->db->table('users')->where('username', $user['username'])->update([
+                    'password' => $user['password'],
+                    'role'     => $user['role']
+                ]);
             }
         }
     }

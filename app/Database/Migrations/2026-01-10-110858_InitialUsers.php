@@ -30,7 +30,7 @@ class InitialUsers extends Migration
             ],
             'role' => [
                 'type'       => 'ENUM',
-                'constraint' => ['admin', 'kasir', 'owner'],
+                'constraint' => ['owner', 'gudang', 'kasir'], // UBAH DISINI
                 'default'    => 'kasir',
             ],
             'created_at' => ['type' => 'DATETIME', 'null' => true],

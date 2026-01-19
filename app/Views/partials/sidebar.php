@@ -1,17 +1,15 @@
 <div class="d-flex flex-column h-100 text-white">
 
-    <!-- BRAND -->
     <div class="px-4 py-3 border-bottom border-secondary border-opacity-25">
         <div class="d-flex align-items-center">
             <div class="bg-primary bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center me-3"
                  style="width: 40px; height: 40px;">
                 <i class="bi bi-shop fs-4 text-primary"></i>
             </div>
-            <span class="fw-bold text-white">POS SYSTEM</span>
+            <span class="fw-bold text-white">LuckyMart7</span>
         </div>
     </div>
 
-    <!-- MENU -->
     <?php
         $uri = service('uri')->getSegment(1);
         function activeMenu($target, $current) {
@@ -29,7 +27,7 @@
         </li>
         <?php endif; ?>
 
-        <?php if(in_array(session()->get('role'), ['owner','admin'])): ?>
+        <?php if(in_array(session()->get('role'), ['owner','gudang'])): ?>
             <li class="nav-item">
                 <a href="<?= base_url('products') ?>" class="nav-link <?= activeMenu('products', $uri) ?>">
                     <i class="bi bi-box-seam me-2"></i> Produk
@@ -55,7 +53,6 @@
             </li>
         <?php endif; ?>
 
-        <!-- USERS (OWNER ONLY, DI BAWAH LAPORAN) -->
         <?php if(session()->get('role') === 'owner'): ?>
             <li class="nav-item mt-2">
                 <a href="<?= base_url('users') ?>" class="nav-link <?= activeMenu('users', $uri) ?>">
@@ -66,7 +63,6 @@
 
     </ul>
 
-    <!-- PROFILE (BOTTOM) -->
     <div class="mt-auto px-3 py-3 border-top border-secondary border-opacity-25">
 
         <div class="dropdown">

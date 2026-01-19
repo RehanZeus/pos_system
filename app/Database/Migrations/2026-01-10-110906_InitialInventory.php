@@ -20,6 +20,11 @@ class InitialInventory extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => '100',
             ],
+            // TAMBAHAN: Kolom deleted_at untuk Soft Delete
+            'deleted_at' => [
+                'type' => 'DATETIME', 
+                'null' => true
+            ],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('categories');
@@ -40,7 +45,7 @@ class InitialInventory extends Migration
             'barcode' => [
                 'type'       => 'VARCHAR',
                 'constraint' => '50',
-                'unique'     => true, // SUDAH OTOMATIS JADI INDEX
+                'unique'     => true,
             ],
             'name' => [
                 'type'       => 'VARCHAR',
@@ -49,6 +54,12 @@ class InitialInventory extends Migration
             'description' => [
                 'type' => 'TEXT',
                 'null' => true,
+            ],
+            // TAMBAHAN: Kolom Harga Beli (Purchase Price)
+            'purchase_price' => [
+                'type'       => 'DECIMAL',
+                'constraint' => '15,2',
+                'default'    => 0,
             ],
             'price' => [
                 'type'       => 'DECIMAL',
@@ -67,11 +78,13 @@ class InitialInventory extends Migration
             ],
             'created_at' => ['type' => 'DATETIME', 'null' => true],
             'updated_at' => ['type' => 'DATETIME', 'null' => true],
+            // TAMBAHAN: Kolom deleted_at untuk Produk juga
+            'deleted_at' => ['type' => 'DATETIME', 'null' => true],
         ]);
         
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('category_id', 'categories', 'id', 'CASCADE', 'RESTRICT');
-        $this->forge->addKey('name'); // Kita tetap index Nama Produk
+        $this->forge->addKey('name');
         
         $this->forge->createTable('products');
     }

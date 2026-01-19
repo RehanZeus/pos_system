@@ -73,7 +73,6 @@ class Reports extends BaseController
 
         if ($mode == 'all') {
             // --- LOGIKA EXPORT SEMUA DATA ---
-            // Set tanggal dari masa lalu (misal th 2000) sampai hari ini
             $startDate = '2000-01-01'; 
             $endDate   = date('Y-m-d');
             
@@ -187,23 +186,24 @@ class Reports extends BaseController
                 $grandOmset += $omsetTransaksi;
                 $grandProfit += $profitTransaksi;
 
+                // --- PERBAIKAN FORMAT RUPIAH DISINI ---
                 echo '<tr>
                         <td class="text-center" style="mso-number-format:\@">' . $row['invoice_no'] . '</td>
                         <td class="text-center">' . date('d/m/Y H:i', strtotime($row['created_at'])) . '</td>
                         <td>' . $row['cashier_name'] . '</td>
                         <td class="text-center">' . $row['payment_method'] . '</td>
-                        <td class="text-right pink">' . $modalTransaksi . '</td>
-                        <td class="text-right blue">' . $omsetTransaksi . '</td>
-                        <td class="text-right green">' . $profitTransaksi . '</td>
+                        <td class="text-right pink">Rp ' . number_format($modalTransaksi, 0, ',', '.') . '</td>
+                        <td class="text-right blue">Rp ' . number_format($omsetTransaksi, 0, ',', '.') . '</td>
+                        <td class="text-right green">Rp ' . number_format($profitTransaksi, 0, ',', '.') . '</td>
                       </tr>';
             }
 
-            // Footer Total
+            // --- PERBAIKAN FORMAT RUPIAH DI TOTAL FOOTER ---
             echo '<tr>
                     <td colspan="4" class="text-right" style="background:#eee; font-weight:bold;">TOTAL</td>
-                    <td class="text-right pink" style="background:#eee; font-weight:bold;">' . $grandModal . '</td>
-                    <td class="text-right blue" style="background:#eee; font-weight:bold;">' . $grandOmset . '</td>
-                    <td class="text-right green" style="background:#eee; font-weight:bold; font-size:1.2em;">' . $grandProfit . '</td>
+                    <td class="text-right pink" style="background:#eee; font-weight:bold;">Rp ' . number_format($grandModal, 0, ',', '.') . '</td>
+                    <td class="text-right blue" style="background:#eee; font-weight:bold;">Rp ' . number_format($grandOmset, 0, ',', '.') . '</td>
+                    <td class="text-right green" style="background:#eee; font-weight:bold; font-size:1.2em;">Rp ' . number_format($grandProfit, 0, ',', '.') . '</td>
                   </tr>';
         }
               

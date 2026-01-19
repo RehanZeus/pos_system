@@ -58,11 +58,11 @@ class Auth extends BaseController
     private function redirectBasedOnRole($role)
     {
         if ($role == 'owner') {
-            return redirect()->to('/dashboard'); // Owner -> Dashboard
-        } elseif ($role == 'admin') {
-            return redirect()->to('/products');  // Admin -> Produk (Gudang)
+            return redirect()->to('/dashboard');
+        } elseif ($role == 'gudang') { // UBAH DISINI
+            return redirect()->to('/products');  // Gudang -> Produk
         } elseif ($role == 'kasir') {
-            return redirect()->to('/pos');       // Kasir -> POS
+            return redirect()->to('/pos');
         }
         return redirect()->to('/'); 
     }

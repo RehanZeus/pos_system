@@ -11,7 +11,7 @@
                      style="width: 70px; height: 70px;">
                     <i class="bi bi-shop fs-2 text-primary"></i>
                 </div>
-                <h4 class="fw-bold text-dark mb-1">POS SYSTEM</h4>
+                <h4 class="fw-bold text-dark mb-1">LuckyMart7</h4>
                 <p class="text-muted mb-0">Silakan login untuk masuk</p>
             </div>
 
@@ -53,7 +53,7 @@
             </form>
 
             <div class="text-center mt-4 text-muted small">
-                &copy; <?= date('Y') ?> POS Retail System
+                &copy; <?= date('Y') ?> LuckyMart7
             </div>
 
         </div>

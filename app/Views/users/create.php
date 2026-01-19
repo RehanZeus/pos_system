@@ -24,8 +24,7 @@
         <label class="form-label">Role</label>
         <select name="role" class="form-select" required>
             <option value="kasir">Kasir</option>
-            <option value="admin">Admin</option>
-        </select>
+            <option value="gudang">Staf Gudang</option> </select>
     </div>
 
     <div class="d-flex gap-2">

@@ -22,8 +22,8 @@ class RoleFilter implements FilterInterface
             if ($role == 'owner') {
                 return redirect()->to('/dashboard');
             }
-            if ($role == 'admin') {
-                return redirect()->to('/products'); // Admin Gudang -> Produk
+            if ($role == 'gudang') { // UBAH DISINI
+                return redirect()->to('/products'); // Gudang -> Produk
             }
             if ($role == 'kasir') {
                 return redirect()->to('/pos');      // Kasir -> POS
