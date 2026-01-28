@@ -54,15 +54,35 @@ class Pos extends BaseController
         $db = \Config\Database::connect();
         $productModel = new ProductModel();
 
-        // 1. Validasi Stok
+        // --- LANGKAH 1: HITUNG TOTAL QTY PER PRODUK (PRE-CALCULATION) ---
+        // Kita gabungkan dulu qty jika ada produk yang sama discan berkali-kali
+        $totalQtyNeeded = [];
         foreach ($json->cart as $item) {
-            $product = $productModel->find($item->id);
-            if (!$product || $product['stock'] < $item->qty) {
-                return $this->response->setJSON(['status' => 'error', 'message' => 'Stok ' . ($product['name'] ?? 'Produk') . ' tidak cukup!']);
+            $id = $item->id;
+            if (!isset($totalQtyNeeded[$id])) {
+                $totalQtyNeeded[$id] = 0;
+            }
+            $totalQtyNeeded[$id] += $item->qty;
+        }
+
+        // --- LANGKAH 2: VALIDASI STOK (PAKAI TOTAL GABUNGAN) ---
+        foreach ($totalQtyNeeded as $productId => $qtyRequired) {
+            $product = $productModel->find($productId);
+            
+            if (!$product) {
+                return $this->response->setJSON(['status' => 'error', 'message' => 'Produk ID ' . $productId . ' tidak ditemukan!']);
+            }
+
+            // Cek apakah Stok Database < Total Qty yang diminta
+            if ($product['stock'] < $qtyRequired) {
+                return $this->response->setJSON([
+                    'status' => 'error', 
+                    'message' => 'Stok "' . $product['name'] . '" tidak cukup! Sisa: ' . $product['stock'] . ', Diminta: ' . $qtyRequired
+                ]);
             }
         }
 
-        // 2. Mulai Transaksi Database
+        // --- LANGKAH 3: EKSEKUSI TRANSAKSI ---
         $db->transStart();
 
         $saleModel = new SaleModel();
@@ -73,7 +93,7 @@ class Pos extends BaseController
             'invoice_no'     => $invoiceNo,
             'user_id'        => session()->get('id'),
             'total_price'    => $json->total,
-            'pay_amount'     => $json->pay, // Variabel ini sekarang wajib ada
+            'pay_amount'     => $json->pay, 
             'payment_method' => 'CASH',
             'created_at'     => date('Y-m-d H:i:s')
         ]);
@@ -89,7 +109,7 @@ class Pos extends BaseController
                 'subtotal'      => $item->price * $item->qty
             ]);
 
-            // Kurangi Stok Produk
+            // Kurangi Stok Produk (Query Langsung agar aman & cepat)
             $db->query("UPDATE products SET stock = stock - ? WHERE id = ?", [$item->qty, $item->id]);
         }
 
@@ -122,9 +142,10 @@ class Pos extends BaseController
         return view('pos/struk', [
             'sale'          => $sale,
             'items'         => $items,
-            'store_name'    => 'TOKO POS RETAIL',
-            'store_address' => 'Jl. Merdeka No. 45',
-            'store_phone'   => '0812-3456-7890'
+            // Data Toko Anda
+            'store_name'    => 'LUCKY MART 7',
+            'store_address' => 'Jl. Adipati Mersi No. 66',
+            'store_phone'   => '0851-3751-6507'
         ]);
     }
 }
